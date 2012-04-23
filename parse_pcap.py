@@ -7,6 +7,10 @@ import re
 import dpkt
 
 
+# use these to filter out the nonsense
+FILTERS = (r"/js/", r"/css/")
+
+
 def get_hostname(http_data):
     """dpkt doesn't seem to have a simple way to grab the hostname"""
     match = re.search(r"host:.*\n", str(http_data))
@@ -16,7 +20,17 @@ def get_hostname(http_data):
 
 def pretty_time(timestamp):
     """returns a string of the given time made pretty"""
-    return time.strftime("%a, %b %d %l:%M %p", time.localtime(timestamp))
+    return time.strftime("%a, %b %d %l:%M:%S %p", time.localtime(timestamp))
+
+
+def url_should_die(url):
+    """returns True if url matches any of the defined FILTERS, False
+    otherwise"""
+    for f in FILTERS:
+        match = re.search(f, url)
+        if match:
+            return True # if a single match is found, url should die
+    return False # after cycling the filters, the url is okay
 
 
 def parse_pcap(filename):
@@ -40,8 +54,10 @@ def parse_pcap(filename):
             # time because of that
             except:
                 pass
-            full_url = get_hostname(http) + http.uri
-            ret_data.append((pretty_time(ts), full_url))
+
+            if not url_should_die(http.uri): # filter out specified patterns
+                full_url = get_hostname(http) + http.uri
+                ret_data.append((pretty_time(ts), full_url))
 
     f.close()
     return ret_data
@@ -50,6 +66,7 @@ def parse_pcap(filename):
 def prettify_output_text(in_tuples):
     """shows the output in a readable way, plaintext"""
     for t, u in in_tuples:
+        print "\n"
         print t
         print u
 
@@ -60,7 +77,6 @@ def prettify_output_html(in_tupes):
 
 
 def main(argv):
-
     if len(argv) < 2:
         print "You're doing it wrong."
         sys.exit(1)
