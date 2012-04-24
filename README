@@ -1,0 +1,6 @@
+This tool parses raw packet capture data (from tcpdump, wireshark, etc.) and
+formats it nicely into a real browser history. This makes snooping on people a
+much more pleasant experience!
+
+It uses dpkt to read the capture data, so any pcap-compatible output should be
+hunky dory.
