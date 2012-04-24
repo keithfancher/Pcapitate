@@ -1,0 +1,3 @@
+* an option to filter out requests that are extremely close together to make
+  the output closer to a real browser history (fewer stylesheet grabs, images,
+  javascript, etc)
