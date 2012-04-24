@@ -9,26 +9,27 @@ import dpkt
 
 
 # use these to filter out the nonsense
-FILTERS = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/",
+EXCLUDE = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/",
            r"/applets")
 
 
 def get_hostname(http_data):
-    """dpkt doesn't seem to have a simple way to grab the hostname"""
+    """dpkt doesn't seem to have a simple way to grab the hostname, so do it
+    manually"""
     match = re.search(r"host:.*\n", str(http_data))
     if match:
         return match.group(0)[6:-2]
 
 
 def pretty_time(timestamp):
-    """returns a string of the given time made pretty"""
+    """Returns a string of the given time made pretty"""
     return time.strftime("%a, %b %d %l:%M:%S %p", time.localtime(timestamp))
 
 
-def url_should_die(url):
-    """returns True if url matches any of the defined FILTERS, False
+def url_should_die(url, filters):
+    """Returns True if url matches any of the defined filters, False
     otherwise"""
-    for f in FILTERS:
+    for f in filters:
         match = re.search(f, url)
         if match:
             return True # if a single match is found, url should die
@@ -36,7 +37,7 @@ def url_should_die(url):
 
 
 def get_page_title(url):
-    """given a URL, gets the title for each page using urllib2; if no title,
+    """Given a URL, gets the title for each page using urllib2; if no title,
     returns empty string"""
     response = urllib2.urlopen(url)
     html = response.read()
@@ -48,9 +49,9 @@ def get_page_title(url):
 
 
 def parse_pcap(filename, resolve_titles=False):
-    """takes the filename of a capture file, returns a list of tuples in the
-    form (time, url, title). if resolve_titles is set to True, pulls in the
-    sites using urllib2 and gets their current titles. this can take some
+    """Takes the filename of a capture file, returns a list of tuples in the
+    form (time, url, title). If resolve_titles is set to True, pulls in the
+    sites using urllib2 and gets their current titles. This can take some
     time..."""
     ret_data = []
     f = open(filename)
@@ -71,20 +72,18 @@ def parse_pcap(filename, resolve_titles=False):
             except:
                 pass
 
-            if not url_should_die(http.uri): # filter out specified patterns
+            if not url_should_die(http.uri, EXCLUDE): # filter out bullshit
                 full_url = "http://" + get_hostname(http) + http.uri
+                title = ""
                 if resolve_titles:
-                    ret_data.append( (pretty_time(ts), full_url,
-                                      get_page_title(full_url)) )
-                else:
-                    ret_data.append( (pretty_time(ts), full_url, "") )
-
+                    title = get_page_title(full_url)
+                ret_data.append((pretty_time(ts), full_url, title))
     f.close()
     return ret_data
 
 
 def show_output_text(in_tuples):
-    """shows the output in a readable way, plaintext"""
+    """Shows the output as plaintext"""
     for ts, url, title in in_tuples:
         print ts
         print url
@@ -92,7 +91,7 @@ def show_output_text(in_tuples):
 
 
 def show_output_html(in_tuples):
-    """shows the output in a readable way, HTML"""
+    """Shows the output as HTML"""
     print '<html><head><title>Um, whatever</title></head><body>'
     print '<table border="1">'
     print '<tr><td>TIME</td><td>URL</td><td>TITLE</td></tr>'
@@ -103,7 +102,7 @@ def show_output_html(in_tuples):
 
 
 def get_args():
-    """gets and parses command line arguments"""
+    """Gets and parses command line arguments"""
     parser = argparse.ArgumentParser()
     parser.add_argument('--output-html', action='store_true', default=False,
                         help='show output in HTML instead of plaintext')
@@ -115,7 +114,7 @@ def get_args():
 
 
 def main():
-    """my main() man"""
+    """My main() man"""
     args = get_args()
     out_data = parse_pcap(args.filename, args.get_titles)
     if args.output_html:
