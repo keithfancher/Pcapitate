@@ -9,7 +9,8 @@ import dpkt
 
 
 # use these to filter out the nonsense
-FILTERS = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/")
+FILTERS = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/",
+           r"/applets")
 
 
 def get_hostname(http_data):
@@ -82,7 +83,7 @@ def parse_pcap(filename, resolve_titles=False):
     return ret_data
 
 
-def prettify_output_text(in_tuples):
+def show_output_text(in_tuples):
     """shows the output in a readable way, plaintext"""
     for ts, url, title in in_tuples:
         print ts
@@ -90,9 +91,15 @@ def prettify_output_text(in_tuples):
         print title + "\n"
 
 
-def prettify_output_html(in_tupes):
+def show_output_html(in_tuples):
     """shows the output in a readable way, HTML"""
-    pass
+    print '<html><head><title>Um, whatever</title></head><body>'
+    print '<table border="1">'
+    print '<tr><td>TIME</td><td>URL</td><td>TITLE</td></tr>'
+    for ts, url, title in in_tuples:
+        print '<tr><td>'+ts+'</td><td><a href="'+url+'">'+url+'</a></td><td>'+title+'</td></tr>'
+    print '</table>'
+    print '</body></html>'
 
 
 def main(argv):
@@ -101,7 +108,8 @@ def main(argv):
         sys.exit(1)
 
     out_data = parse_pcap(argv[1], True)
-    prettify_output_text(out_data)
+#    show_output_text(out_data)
+    show_output_html(out_data)
 
 
 if __name__ == "__main__":
