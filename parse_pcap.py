@@ -1,10 +1,10 @@
 #!/usr/bin/env python
 
 
-import sys
 import time
 import re
 import urllib2
+import argparse
 import dpkt
 
 
@@ -102,15 +102,27 @@ def show_output_html(in_tuples):
     print '</body></html>'
 
 
-def main(argv):
-    if len(argv) < 2:
-        print "You're doing it wrong."
-        sys.exit(1)
+def get_args():
+    """gets and parses command line arguments"""
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--output-html', action='store_true', default=False,
+                        help='show output in HTML instead of plaintext')
+    parser.add_argument('--get-titles', action='store_true', default=False,
+                        help='fetch page titles; note that this can take a bit of time!')
+    parser.add_argument('filename', action='store',
+                        help='the pcap file to analyze and parse')
+    return parser.parse_args()
 
-    out_data = parse_pcap(argv[1], True)
-#    show_output_text(out_data)
-    show_output_html(out_data)
+
+def main():
+    """my main() man"""
+    args = get_args()
+    out_data = parse_pcap(args.filename, args.get_titles)
+    if args.output_html:
+        show_output_html(out_data)
+    else:
+        show_output_text(out_data)
 
 
 if __name__ == "__main__":
-    main(sys.argv)
+    main()
