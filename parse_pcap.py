@@ -9,7 +9,7 @@ import dpkt
 
 
 # use these to filter out the nonsense
-FILTERS = (r"/js/", r"/css/", r".png", r".jpg", r".swf", r"/_status/")
+FILTERS = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/")
 
 
 def get_hostname(http_data):
