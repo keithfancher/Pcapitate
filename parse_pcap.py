@@ -4,11 +4,12 @@
 import sys
 import time
 import re
+import urllib2
 import dpkt
 
 
 # use these to filter out the nonsense
-FILTERS = (r"/js/", r"/css/")
+FILTERS = (r"/js/", r"/css/", r".png", r".jpg", r".swf", r"/_status/")
 
 
 def get_hostname(http_data):
@@ -33,9 +34,23 @@ def url_should_die(url):
     return False # after cycling the filters, the url is okay
 
 
-def parse_pcap(filename):
+def get_page_title(url):
+    """given a URL, gets the title for each page using urllib2; if no title,
+    returns empty string"""
+    response = urllib2.urlopen(url)
+    html = response.read()
+    match = re.search(r"<title>.*</title>", html) # TODO <TITLE> also
+    if match:
+        return match.group(0)[7:-8] # strip tags
+    else:
+        return ""
+
+
+def parse_pcap(filename, resolve_titles=False):
     """takes the filename of a capture file, returns a list of tuples in the
-    form (time, url)"""
+    form (time, url, title). if resolve_titles is set to True, pulls in the
+    sites using urllib2 and gets their current titles. this can take some
+    time..."""
     ret_data = []
     f = open(filename)
     pcap = dpkt.pcap.Reader(f)
@@ -56,8 +71,12 @@ def parse_pcap(filename):
                 pass
 
             if not url_should_die(http.uri): # filter out specified patterns
-                full_url = get_hostname(http) + http.uri
-                ret_data.append((pretty_time(ts), full_url))
+                full_url = "http://" + get_hostname(http) + http.uri
+                if resolve_titles:
+                    ret_data.append( (pretty_time(ts), full_url,
+                                      get_page_title(full_url)) )
+                else:
+                    ret_data.append( (pretty_time(ts), full_url, "") )
 
     f.close()
     return ret_data
@@ -65,10 +84,10 @@ def parse_pcap(filename):
 
 def prettify_output_text(in_tuples):
     """shows the output in a readable way, plaintext"""
-    for t, u in in_tuples:
-        print "\n"
-        print t
-        print u
+    for ts, url, title in in_tuples:
+        print ts
+        print url
+        print title + "\n"
 
 
 def prettify_output_html(in_tupes):
@@ -81,7 +100,7 @@ def main(argv):
         print "You're doing it wrong."
         sys.exit(1)
 
-    out_data = parse_pcap(argv[1])
+    out_data = parse_pcap(argv[1], True)
     prettify_output_text(out_data)
 
 
