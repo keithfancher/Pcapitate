@@ -1,6 +1,30 @@
+README
+======
+
 This tool parses raw packet capture data (from tcpdump, wireshark, etc.) and
-formats it nicely into a real browser history. This makes snooping on people a
-much more pleasant experience!
+formats it nicely into a semi-real browser history. This makes snooping on
+people a much more pleasant experience!
 
 It uses dpkt to read the capture data, so any pcap-compatible output should be
-hunky dory.
+hunky dory (in theory -- I've only run very limited tests so far).
+
+
+REQUIREMENTS
+------------
+* Python (no shit)
+* dpkt
+* argparse (standard with Python 2.7+)
+
+
+USAGE
+-----
+Just pass it a pcap file and it will spit output to stdout for you to have your
+way with. It has the following command line options:
+
+--output-html
+    Output in HTML instead of plaintext. A little prettier, a little easier to
+    navigate.
+
+--get-titles
+    Fetch current page titles using urllib2 (this can take some time, so be
+    patient). This just makes the output a little bit more useful...
