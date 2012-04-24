@@ -40,7 +40,7 @@ def get_page_title(url):
     returns empty string"""
     response = urllib2.urlopen(url)
     html = response.read()
-    match = re.search(r"<title>.*</title>", html) # TODO <TITLE> also
+    match = re.search(r"<title>.*</title>", html, re.IGNORECASE)
     if match:
         return match.group(0)[7:-8] # strip tags
     else:
