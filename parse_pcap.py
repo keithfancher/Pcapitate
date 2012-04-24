@@ -39,7 +39,10 @@ def url_should_die(url, filters):
 def get_page_title(url):
     """Given a URL, gets the title for each page using urllib2; if no title,
     returns empty string"""
-    response = urllib2.urlopen(url)
+    try:
+        response = urllib2.urlopen(url)
+    except urllib2.HTTPError:
+        return "HTTP error! Title not retrieved" # good enough for me!
     html = response.read()
     match = re.search(r"<title>.*</title>", html, re.IGNORECASE)
     if match:
