@@ -13,14 +13,6 @@ EXCLUDE = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/",
            r"/applets")
 
 
-def get_hostname(http_data):
-    """dpkt doesn't seem to have a simple way to grab the hostname, so do it
-    manually"""
-    match = re.search(r"host:.*\n", str(http_data))
-    if match:
-        return match.group(0)[6:-2]
-
-
 def pretty_time(timestamp):
     """Returns a string of the given time made pretty"""
     return time.strftime("%a, %b %d %l:%M:%S %p", time.localtime(timestamp))
@@ -76,7 +68,7 @@ def parse_pcap(filename, resolve_titles=False):
                 pass
 
             if not url_should_die(http.uri, EXCLUDE): # filter out bullshit
-                full_url = "http://" + get_hostname(http) + http.uri
+                full_url = "http://" + http.headers['host'] + http.uri
                 title = ""
                 if resolve_titles:
                     title = get_page_title(full_url)
