@@ -65,12 +65,14 @@ def parse_pcap(filename, resolve_titles=False):
 
         tcp = ip.data
         if tcp.dport == 80 and len(tcp.data) > 0: # http, non-zero data
-            try:
-                http = dpkt.http.Request(tcp.data)
             # we don't care about all of dpkt's errors -- most likely our pcap
             # files will be truncated, and we don't want dpkt to fail every
             # time because of that
-            except:
+            try:
+                http = dpkt.http.Request(tcp.data)
+            except dpkt.NeedData: # truncated header
+                pass
+            except dpkt.UnpackError: # "invalid" header
                 pass
 
             if not url_should_die(http.uri, EXCLUDE): # filter out bullshit
