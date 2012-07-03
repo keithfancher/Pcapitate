@@ -53,12 +53,18 @@ def parse_pcap(filename, resolve_titles=False):
     pcap = dpkt.pcap.Reader(f)
 
     for ts, buf in pcap:
+        # only handle IP
         eth = dpkt.ethernet.Ethernet(buf)
-        ip = eth.data
-        tcp = ip.data
+        if eth.type != dpkt.ethernet.ETH_TYPE_IP:
+            continue
 
-        # requests with nonzero data
-        if tcp.dport == 80 and len(tcp.data) > 0:
+        # only handle TCP
+        ip = eth.data
+        if ip.p != dpkt.ip.IP_PROTO_TCP:
+            continue
+
+        tcp = ip.data
+        if tcp.dport == 80 and len(tcp.data) > 0: # http, non-zero data
             try:
                 http = dpkt.http.Request(tcp.data)
             # we don't care about all of dpkt's errors -- most likely our pcap
