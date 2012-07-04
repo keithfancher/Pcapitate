@@ -15,7 +15,7 @@ EXCLUDE = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/",
 
 def pretty_time(timestamp):
     """Returns a string of the given time made pretty"""
-    return time.strftime("%a, %b %d %l:%M:%S %p", time.localtime(timestamp))
+    return time.strftime("%a, %b %d, %l:%M:%S %p", time.localtime(timestamp))
 
 
 def url_should_die(url, filters):
@@ -95,13 +95,13 @@ def show_output_text(in_tuples):
 
 def show_output_html(in_tuples):
     """Shows the output as HTML"""
-    print '<html><head><title>Um, whatever</title></head><body>'
-    print '<table border="1">'
-    print '<tr><td>TIME</td><td>URL</td><td>TITLE</td></tr>'
+    print '''<html><head><title>Um, whatever</title><style>
+             table,td,th {border: 1px solid black; border-collapse: collapse; padding: 5px;}
+             </style></head><body><table><tr><td><strong>TIME</strong></td>
+             <td><strong>URL</strong></td><td><strong>TITLE</strong></td></tr>'''
     for ts, url, title in in_tuples:
         print '<tr><td>'+ts+'</td><td><a href="'+url+'">'+url+'</a></td><td>'+title+'</td></tr>'
-    print '</table>'
-    print '</body></html>'
+    print '</table></body></html>'
 
 
 def get_args():
