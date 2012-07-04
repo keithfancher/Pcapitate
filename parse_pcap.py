@@ -71,7 +71,12 @@ def parse_pcap(filename, resolve_titles=False):
             try:
                 http = dpkt.http.Request(tcp.data)
             except dpkt.NeedData: # truncated header
-                pass
+                # Workaround for a dpkt (version 1.6) bug. dpkt will only
+                # accept packets that end with \r\n\r\n? Many legit captures
+                # were causing exceptions because of this, both with tcpdump
+                # and wireshark. See:
+                # http://code.google.com/p/dpkt/issues/detail?id=90&thanks=90&ts=1337593947
+                http = dpkt.http.Request(tcp.data + "\r\n\r\n")
             except dpkt.UnpackError: # "invalid" header
                 pass
 
