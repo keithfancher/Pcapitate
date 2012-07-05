@@ -120,11 +120,11 @@ def show_output_html(in_tuples):
 def get_args():
     """Gets and parses command line arguments"""
     parser = argparse.ArgumentParser()
-    parser.add_argument('--output-html', action='store_true', default=False,
+    parser.add_argument('-w', '--output-html', action='store_true', default=False,
                         help='show output in HTML instead of plaintext')
-    parser.add_argument('--get-titles', action='store_true', default=False,
+    parser.add_argument('-t', '--get-titles', action='store_true', default=False,
                         help='fetch page titles; note that this can take a bit of time!')
-    parser.add_argument('--kill-untitled', action='store_true', default=False,
+    parser.add_argument('-u', '--kill-untitled', action='store_true', default=False,
                         help='don\'t return untitled pages in the output; this can be a good way to filter out "fake" requests and JS, CSS, etc.')
     parser.add_argument('filename', action='store',
                         help='the pcap file to analyze and parse')
