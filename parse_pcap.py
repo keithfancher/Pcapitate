@@ -103,9 +103,9 @@ def show_output_html(in_tuples):
     print '''<html><head><title>Um, whatever</title><style>
              table,td,th {border: 1px solid black; border-collapse: collapse; padding: 5px;}
              </style></head><body><table><tr><td><strong>TIME</strong></td>
-             <td><strong>URL</strong></td><td><strong>TITLE</strong></td></tr>'''
+             <td><strong>TITLE</strong></td><td><strong>URL</strong></td></tr>'''
     for ts, url, title in in_tuples:
-        print '<tr><td>'+ts+'</td><td><a href="'+url+'">'+url+'</a></td><td>'+title+'</td></tr>'
+        print '<tr><td>'+ts+'</td><td>'+title+'</td><td><a href="'+url+'">'+url+'</a></td></tr>'
     print '</table></body></html>'
 
 
