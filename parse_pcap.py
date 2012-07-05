@@ -43,11 +43,17 @@ def get_page_title(url):
         return ""
 
 
-def parse_pcap(filename, resolve_titles=False):
+def parse_pcap(filename, resolve_titles=False, kill_untitled_pages=False):
     """Takes the filename of a capture file, returns a list of tuples in the
-    form (time, url, title). If resolve_titles is set to True, pulls in the
-    sites using urllib2 and gets their current titles. This can take some
-    time..."""
+    form (time, url, title).
+
+    If resolve_titles is set to True, pulls in the sites using urllib2 and gets
+    their current titles. This can take a bit of time.
+
+    If kill_untitled_pages is set to True, only pages that have a <title> will
+    be returned. This is an easy way to cut down on non-page requests (like JS,
+    CSS, etc.), though there's always the risk that someone visits a valid page
+    with no title..."""
     ret_data = []
     f = open(filename)
     pcap = dpkt.pcap.Reader(f)
@@ -85,6 +91,8 @@ def parse_pcap(filename, resolve_titles=False):
                 title = ""
                 if resolve_titles:
                     title = get_page_title(full_url)
+                    if not title and kill_untitled_pages:
+                        continue # don't include this page in output
                 ret_data.append((pretty_time(ts), full_url, title))
     f.close()
     return ret_data
@@ -116,6 +124,8 @@ def get_args():
                         help='show output in HTML instead of plaintext')
     parser.add_argument('--get-titles', action='store_true', default=False,
                         help='fetch page titles; note that this can take a bit of time!')
+    parser.add_argument('--kill-untitled', action='store_true', default=False,
+                        help='don\'t return untitled pages in the output; this can be a good way to filter out "fake" requests and JS, CSS, etc.')
     parser.add_argument('filename', action='store',
                         help='the pcap file to analyze and parse')
     return parser.parse_args()
@@ -124,7 +134,7 @@ def get_args():
 def main():
     """My main() man"""
     args = get_args()
-    out_data = parse_pcap(args.filename, args.get_titles)
+    out_data = parse_pcap(args.filename, args.get_titles, args.kill_untitled)
     if args.output_html:
         show_output_html(out_data)
     else:
