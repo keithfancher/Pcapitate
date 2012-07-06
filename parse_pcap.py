@@ -10,7 +10,7 @@ import dpkt
 
 # use these to filter out the nonsense
 EXCLUDE = (r"/js/", r"/css/", r".png", r".jpg", r".gif", r".swf", r"/_status/",
-           r"/applets/", r"/bid/")
+           r"/applets/", r"/bid/", r"/iframe/")
 
 
 def pretty_time(timestamp):
