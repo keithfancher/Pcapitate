@@ -35,6 +35,8 @@ def get_page_title(url):
         response = urllib2.urlopen(url)
     except urllib2.HTTPError:
         return "HTTP error! Title not retrieved" # good enough for me!
+    except urllib2.URLError:
+        return "Bad URL! Title not retrieved"
     html = response.read()
     match = re.search(r"<title>(.*)</title>", html, re.IGNORECASE)
     if match:

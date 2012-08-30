@@ -58,8 +58,12 @@ class TestGetPageTitle(unittest.TestCase):
         self.assertEqual(p.get_page_title("http://nostarch.com/sites/default/files/wabi_logo.png"), "")
 
     def test_http_error(self):
-        """TODO: HTTP errors should return... an error!"""
-        pass
+        """HTTP errors should return... an error!"""
+        self.assertEqual(p.get_page_title("http://nostarch.com/asdfasdfasdf"), "HTTP error! Title not retrieved")
+
+    def test_bad_url(self):
+        """Bad URLs should return... an error!"""
+        self.assertEqual(p.get_page_title("http://asdfasdfasdfasdfasdf/asdfasdfasdf"), "Bad URL! Title not retrieved")
 
 
 if __name__ == "__main__":
