@@ -33,8 +33,17 @@ class TestParsePcap(unittest.TestCase):
 
 class TestUrlShouldDie(unittest.TestCase):
 
-    def test_basic_shit(self):
-        pass
+    def test_should_die(self):
+        """Given URLs should be filtered out of the list"""
+        filters = (r"/js/", r"/css/")
+        self.assertTrue(p.url_should_die("http://blah.com/js/whatever.js", filters))
+        self.assertTrue(p.url_should_die("http://blah.com/css/whatever.js", filters))
+
+    def test_should_not_die(self):
+        """Given URLs should NOT be filetered out of the list!"""
+        filters = (r"/js/", r"/css/")
+        self.assertFalse(p.url_should_die("http://blah.com/whatever", filters))
+        self.assertFalse(p.url_should_die("http://blah.com/whatever/asdfot", filters))
 
 
 if __name__ == "__main__":
