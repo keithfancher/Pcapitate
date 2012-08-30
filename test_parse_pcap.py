@@ -46,5 +46,21 @@ class TestUrlShouldDie(unittest.TestCase):
         self.assertFalse(p.url_should_die("http://blah.com/whatever/asdfot", filters))
 
 
+class TestGetPageTitle(unittest.TestCase):
+
+    def test_good_page_titles(self):
+        """Sites with titles should be returned properly"""
+        self.assertEqual(p.get_page_title("http://nostarch.com"), "No Starch Press")
+        self.assertEqual(p.get_page_title("http://google.com"), "Google")
+
+    def test_no_title(self):
+        """Sites (or resources) with no <title> set should return empty string"""
+        self.assertEqual(p.get_page_title("http://nostarch.com/sites/default/files/wabi_logo.png"), "")
+
+    def test_http_error(self):
+        """TODO: HTTP errors should return... an error!"""
+        pass
+
+
 if __name__ == "__main__":
     unittest.main()
