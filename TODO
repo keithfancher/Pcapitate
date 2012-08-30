@@ -1,3 +1,7 @@
+* --kill-untitled should imply --get-titles, duh!
+
+* the timestamps are incorrect in some cases?
+
 * an option to filter out requests that are extremely close together to make
   the output closer to a real browser history (fewer stylesheet grabs, images,
   javascript, and other automatic stuff shown)
