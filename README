@@ -1,5 +1,5 @@
-README
-======
+PCAPITATE
+=========
 
 This tool parses raw packet capture data (from tcpdump, wireshark, etc.) and
 formats it nicely into a semi-real browser history. This makes snooping on

@@ -1,11 +1,11 @@
 #!/usr/bin/env python
 
 
-import time
-import re
-import urllib2
 import argparse
 import dpkt
+import re
+import time
+import urllib2
 
 
 # use these to filter out the nonsense

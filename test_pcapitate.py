@@ -3,7 +3,7 @@
 
 import unittest
 
-import parse_pcap as p
+import pcapitate as p
 
 
 class TestParsePcap(unittest.TestCase):
