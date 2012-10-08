@@ -11,9 +11,27 @@ hunky dory (in theory -- I've only run very limited tests so far).
 
 REQUIREMENTS
 ------------
-* Python (no shit)
-* dpkt
+* python
 * argparse (standard with Python 2.7+)
+* dpkt
+
+
+INSTALLATION
+------------
+You can clone the git repo thusly:
+
+    $ git clone git://github.com/keithfancher/Pcapitate.git
+
+Then just copy the pcapitate.py file somewhere in your path and run it!
+
+You can also install with pip:
+
+    $ pip install https://github.com/keithfancher/Pcapitate/tarball/master
+
+Note that since dpkt's PyPI entry is borked, you'll still have to install dpkt
+manually even if you use pip. On a Debian-based distro, for instance, do this:
+
+    $ sudo apt-get install python-dpkt
 
 
 USAGE
@@ -21,15 +39,22 @@ USAGE
 Just pass it a pcap file and it will spit output to stdout for you to have your
 way with. It has the following command line options:
 
---output-html
-    Output in HTML instead of plaintext. A little prettier, a little easier to
-    navigate.
+    -w, --output-html
+        Output in HTML instead of plaintext. A little prettier, a little easier
+        to navigate.
 
---get-titles
-    Fetch current page titles using urllib2 (this can take some time, so be
-    patient). This just makes the output a little bit more useful.
+    -t, --get-titles
+        Fetch current page titles using urllib2 (this can take some time, so be
+        patient). This just makes the output a little bit more useful.
 
---kill-untitled
-    Don't included untitled pages in the output. This can be a neat way to
-    filter out dumb requests like JS, CSS, stupid ads, etc. Though you always
-    run the risk that someone will view a valid page without a <title>...
+    -u, --kill-untitled
+        Don't included untitled pages in the output. This can be a neat way to
+        filter out dumb requests like JS, CSS, stupid ads, etc. Though you
+        always run the risk that someone will view a valid page without a
+        <title>...
+
+So a typical use would probably look something like this:
+
+    $ ./pcapitate.py -wut super_secret_browsing.pcap > nice_output.html
+
+Then just open nice_output.html in any browser and enjoy!

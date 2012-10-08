@@ -1,2 +1,4 @@
 *.pyc
 testdata/pending/*
+dist/*
+MANIFEST
