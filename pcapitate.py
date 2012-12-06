@@ -100,7 +100,12 @@ def parse_pcap(filename, resolve_titles=False, kill_untitled_pages=False):
                 # were causing exceptions because of this, both with tcpdump
                 # and wireshark. See:
                 # http://code.google.com/p/dpkt/issues/detail?id=90&thanks=90&ts=1337593947
-                http = dpkt.http.Request(tcp.data + "\r\n\r\n")
+                try:
+                    http = dpkt.http.Request(tcp.data + "\r\n\r\n")
+                except dpkt.NeedData:
+                    # More ridiculousness here, due to dpkt's inflexibility and
+                    # inability to handle truncated data. Don't worry about it!
+                    pass
             except dpkt.UnpackError: # "invalid" header
                 pass
 
