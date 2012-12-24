@@ -1,4 +1,4 @@
 *.pyc
-testdata/pending/*
+testdata/priv/*
 dist/*
 MANIFEST

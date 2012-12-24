@@ -1,9 +1,15 @@
 #!/usr/bin/env python
 
 
+import glob
+import os
 import unittest
 
 import pcapitate as p
+
+
+PRIV_TESTS = False # run tests on private data?
+PRIV_DIR = 'testdata/priv'
 
 
 class TestParsePcap(unittest.TestCase):
@@ -64,6 +70,22 @@ class TestGetPageTitle(unittest.TestCase):
     def test_bad_url(self):
         """Bad URLs should return... an error!"""
         self.assertEqual(p.get_page_title("http://asdfasdfasdfasdfasdf/asdfasdfasdf"), "Bad URL! Title not retrieved")
+
+
+@unittest.skipUnless(PRIV_TESTS, 'Skipping private tests')
+class TestPrivateData(unittest.TestCase):
+
+    def test_private_data(self):
+        """Private test data should not return any exceptions."""
+        os.chdir(PRIV_DIR)
+        priv_files = glob.glob('*.pcap')
+        for f in priv_files:
+            try:
+                p.parse_pcap(f)
+            except:
+                # tell which file is to blame, re-raise
+                print "\nBarfed on: " + f
+                raise
 
 
 if __name__ == "__main__":
